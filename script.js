@@ -6,10 +6,10 @@ $("button").on("click", function () {
     let city = $("#search-value").val();
     $(".history").append(`<button class="list-group-item-action">${city}</button>`);
 
-    let APIKey = "166a433c57516f51dfab1f7edaed8413";
+    const APIKey = "166a433c57516f51dfab1f7edaed8413";
     let queryURL = "https://api.openweathermap.org/data/2.5/weather?q=" + city + "&appid=" + APIKey;
-    let lat = 37.75;
-    let lon = -122.37;
+    // let lat = 37.75;
+    // let lon = -122.37;
 
     $.ajax({
             url: queryURL,
@@ -18,17 +18,6 @@ $("button").on("click", function () {
         .then(function (response) {
             console.log(response);
             appendWeather(response)
-        })
-
-    let UVIndexURL = "https://api.openweathermap.org/data/2.5/uvi?lat=" + lat + "&lon=" + lon + "&appid=" + APIKey;
-
-        $.ajax({
-            url: UVIndexURL,
-            method: "GET"
-        })
-        .then(function (response) {
-            console.log(response);
-            appendUVIndex(response)
         })
 
     let forecastURL = "https://api.openweathermap.org/data/2.5/forecast?q=" + city + "&appid=" + APIKey;
@@ -52,11 +41,12 @@ function appendWeather(data) {
   <div style="width:100%">Temperature: ${Math.round((data.main.temp - 273.15) * 1.8 + 32)}° F</div>
   <div style="width:100%">Humidity: ${data.main.humidity}</div>
   <div style="width:100%">Wind Speed: ${data.wind.speed}</div>
-  <div id="UV" style="width:100%"></div>
+  <div id="UV"></div>
   </div>
   <div class="row"><h2>5-Day Forecast:</h2></div>`);
   lat = data.coord.lat;
   lon = data.coord.lon;
+  appendUVIndex(lat, lon)
 }
 
 function appendForecast(data) {
@@ -71,6 +61,29 @@ function appendForecast(data) {
     }
 }
 
-function appendUVIndex(data) {
-    $("#UV").text(`UV Index: ${data.value}`);
+function appendUVIndex(lat, lon) {
+    let APIKey = "166a433c57516f51dfab1f7edaed8413";
+    let UVIndexURL = "https://api.openweathermap.org/data/2.5/uvi?lat=" + lat + "&lon=" + lon + "&appid=" + APIKey;
+
+    $.ajax({
+        url: UVIndexURL,
+        method: "GET"
+    })
+    .then(function (response) {
+        console.log(response);
+        // appendUVIndex(response)
+        $("#UV").text(`UV Index: ${response.value}`);
+        if (response.value >= 1 && response.value < 3) {
+            $("#UV").css("background-color", "green");
+        } else if (response.value >= 3 && response.value < 5) {
+            $("#UV").css("background-color", "yellow");
+            $("#UV").css("color", "black");
+        } else if (response.value >= 6 && response.value < 7) {
+            $("#UV").css("background-color", "orange");
+        } else if (response.value >= 8 && response.value < 10) {
+            $("#UV").css("background-color", "red");
+        } else if (response.value >= 11) {
+            $("#UV").css("background-color", "violet");
+        }
+    })
 }
