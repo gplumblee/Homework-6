@@ -8,7 +8,8 @@ $("button").on("click", function () {
 
     let APIKey = "166a433c57516f51dfab1f7edaed8413";
     let queryURL = "https://api.openweathermap.org/data/2.5/weather?q=" + city + "&appid=" + APIKey;
-    let forecastURL = "https://api.openweathermap.org/data/2.5/forecast?q=" + city + "&appid=" + APIKey;
+    let lat = 37.75;
+    let lon = -122.37;
 
     $.ajax({
             url: queryURL,
@@ -19,7 +20,20 @@ $("button").on("click", function () {
             appendWeather(response)
         })
 
-    $.ajax({
+    let UVIndexURL = "https://api.openweathermap.org/data/2.5/uvi?lat=" + lat + "&lon=" + lon + "&appid=" + APIKey;
+
+        $.ajax({
+            url: UVIndexURL,
+            method: "GET"
+        })
+        .then(function (response) {
+            console.log(response);
+            appendUVIndex(response)
+        })
+
+    let forecastURL = "https://api.openweathermap.org/data/2.5/forecast?q=" + city + "&appid=" + APIKey;
+
+        $.ajax({
             url: forecastURL,
             method: "GET"
         })
@@ -27,6 +41,7 @@ $("button").on("click", function () {
             console.log(response);
             appendForecast(response)
         })
+
     $("#search-value").val("");
 })
 
@@ -37,9 +52,11 @@ function appendWeather(data) {
   <div style="width:100%">Temperature: ${Math.round((data.main.temp - 273.15) * 1.8 + 32)}° F</div>
   <div style="width:100%">Humidity: ${data.main.humidity}</div>
   <div style="width:100%">Wind Speed: ${data.wind.speed}</div>
-  <div id="UV" style="width:100%">UV Index: </div>
+  <div id="UV" style="width:100%"></div>
   </div>
   <div class="row"><h2>5-Day Forecast:</h2></div>`);
+  lat = data.coord.lat;
+  lon = data.coord.lon;
 }
 
 function appendForecast(data) {
@@ -52,4 +69,8 @@ function appendForecast(data) {
       <p>Humidity: ${data.list[i].main.humidity}</p>
     </div>`);
     }
+}
+
+function appendUVIndex(data) {
+    $("#UV").text(`UV Index: ${data.value}`);
 }
