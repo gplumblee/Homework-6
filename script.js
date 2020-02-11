@@ -51,11 +51,13 @@ function appendWeather(data) {
 function appendForecast(data) {
     $("#forecast").html("");
     for (let i = 0; i < 40; i += 8) {
-        $("#forecast").append(`<div class="col-2">
-      <p style="font-size: 18px; margin-bottom: 0px">${new Date(data.list[i].dt_txt).toLocaleDateString()}</>
-      <img class="owf owf-803" src="https://openweathermap.org/img/wn/${data.list[i].weather[0].icon}.png"/>
-      <p style="font-size: 14px; margin-bottom: 0px">Temp: ${Math.round((data.list[i].main.temp - 273.15) * 1.8 + 32)}° F</p>
-      <p style="font-size: 14px; margin-bottom: 0px">Humidity: ${data.list[i].main.humidity}</p>
+        $("#forecast").append(`<div class="card" style="width: 150px; margin: 0px 20px 20px 0px;">
+            <div class="card-body">
+                <h5 class="card-title">${new Date(data.list[i].dt_txt).toLocaleDateString()}</h5>
+                <img class="owf owf-803" src="https://openweathermap.org/img/wn/${data.list[i].weather[0].icon}.png"/>
+                <p class="card-text">Temp: ${Math.round((data.list[i].main.temp - 273.15) * 1.8 + 32)}° F</p>
+                <p class="card-text">Humidity: ${data.list[i].main.humidity}</p>
+            </div>
     </div>`);
     }
 }
